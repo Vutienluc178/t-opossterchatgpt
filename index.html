@@ -95,13 +95,40 @@ textarea { min-height:130px; resize:vertical; }
 <div class="card">
   <div class="section-title">📝 Thông tin bài học</div>
   <div class="input-row">
-    <div><label>Môn học</label><input type="text" id="subject" placeholder="Ví dụ: Toán 9"></div>
-    <div><label>Khối / Lớp</label><input type="text" id="grade" placeholder="Ví dụ: Lớp 9A1"></div>
+    <div><label>Môn học</label><input type="text" id="subject" placeholder="Ví dụ: Toán 9, Vật lý 11"></div>
+    <div><label>Khối / Lớp</label><input type="text" id="grade" placeholder="Ví dụ: Lớp 9A1, Lớp 11B"></div>
+  </div>
+  <div class="input-row">
+    <div>
+      <label>Trình độ học sinh</label>
+      <select id="studentLevel">
+        <option value="">— Không chỉ định —</option>
+        <option value="weak">Yếu — cần giải thích đơn giản, nhiều ví dụ cụ thể</option>
+        <option value="average">Trung bình — cân bằng lý thuyết và thực hành</option>
+        <option value="good" selected>Khá — có thể dùng thuật ngữ, đòi hỏi tư duy</option>
+        <option value="excellent">Giỏi — nâng cao, kết nối liên môn</option>
+        <option value="mixed">Hỗn hợp — phân hóa nhiều trình độ trong cùng lớp</option>
+      </select>
+    </div>
+    <div>
+      <label>Số lượng ảnh cần tạo</label>
+      <select id="imageCount">
+        <option value="1" selected>1 ảnh tổng hợp đầy đủ</option>
+        <option value="2">2 ảnh (phần 1 + phần 2)</option>
+        <option value="3">3 ảnh (chia 3 phần)</option>
+        <option value="set5">Bộ 5 ảnh slide trình chiếu</option>
+        <option value="set3focus">Bộ 3 ảnh trọng tâm</option>
+      </select>
+    </div>
   </div>
   <label>Chủ đề / Dạng bài</label>
   <input type="text" id="topic" placeholder="Ví dụ: Hệ thức lượng trong tam giác vuông">
   <label>Nội dung kiến thức & công thức</label>
   <textarea id="knowledge" placeholder="Nhập kiến thức, công thức, ví dụ mẫu cần trình bày..."></textarea>
+  <label>Mục tiêu học tập <span style="font-weight:normal;color:#666;font-size:12px;">(sau bài này học sinh cần đạt được gì?)</span></label>
+  <input type="text" id="objective" placeholder="Ví dụ: HS nhận biết và áp dụng được định lý Pythagore vào giải toán thực tế">
+  <label>Yêu cầu đặc biệt <span style="font-weight:normal;color:#666;font-size:12px;">(tùy chọn — ghi rõ nếu có yêu cầu riêng)</span></label>
+  <input type="text" id="special" placeholder="Ví dụ: In đen trắng, dùng cho tiết 1, ưu tiên công thức, thêm bài tập trắc nghiệm...">
 </div>
 
 <!-- CHỌN ĐỊNH DẠNG -->
@@ -169,6 +196,54 @@ textarea { min-height:130px; resize:vertical; }
   <div class="options-row">
     <div><label>Nền giấy</label><select id="paperType"><option value="white">Giấy trắng</option><option value="lined">Giấy kẻ ngang</option><option value="grid">Giấy ô ly</option><option value="notepad">Giấy ghi chú học tập</option><option value="chalkboard">Bảng xanh</option><option value="whiteboard">Bảng trắng</option></select></div>
     <div><label>Độ đậm chữ</label><select id="boldLevel"><option value="bold">Đậm</option><option value="verybold">Rất đậm</option><option value="ultra">Cực đậm trình chiếu</option></select></div>
+  </div>
+  <div class="options-row">
+    <div>
+      <label>🎨 Bảng màu chủ đạo</label>
+      <select id="colorPalette">
+        <option value="blue" selected>🔵 Xanh học thuật — Royal Blue (mặc định)</option>
+        <option value="green">🟢 Xanh lá tươi mát — Educational Green</option>
+        <option value="orange">🟠 Cam năng động — Vibrant Orange</option>
+        <option value="purple">🟣 Tím sáng tạo — Creative Purple</option>
+        <option value="red">🔴 Đỏ ấn tượng — Bold Red</option>
+        <option value="pastel">🌸 Pastel nhẹ nhàng — Soft Pastel</option>
+        <option value="bw">⚫ Đen trắng in ấn — Black &amp; White Print</option>
+        <option value="warm">🟡 Ấm áp vàng cam — Warm Academic</option>
+      </select>
+    </div>
+    <div>
+      <label>✨ Phong cách thiết kế</label>
+      <select id="designStyle">
+        <option value="professional" selected>🎓 Chuyên nghiệp học thuật — Professional Academic</option>
+        <option value="minimal">⬜ Tối giản hiện đại — Clean Minimal</option>
+        <option value="colorful">🌈 Sinh động sắc màu — Colorful & Vivid</option>
+        <option value="cartoon">🎨 Hoạt hình dễ thương — Friendly Cartoon</option>
+        <option value="vintage">📜 Cổ điển vintage — Classic Vintage</option>
+        <option value="dark">🌙 Nền tối hiện đại — Dark Mode</option>
+      </select>
+    </div>
+  </div>
+  <div class="options-row">
+    <div>
+      <label>📊 Mức độ chi tiết</label>
+      <select id="detailLevel">
+        <option value="concise">📌 Tóm gọn cốt lõi — chỉ điểm quan trọng nhất</option>
+        <option value="balanced" selected>📋 Đầy đủ vừa phải — cân bằng nội dung</option>
+        <option value="detailed">📚 Chi tiết đầy đủ — bao quát toàn bộ kiến thức</option>
+        <option value="ultra">🔬 Cực kỳ chi tiết — mọi định nghĩa, công thức, ví dụ</option>
+      </select>
+    </div>
+    <div>
+      <label>🖼️ Ngôn ngữ hình ảnh</label>
+      <select id="visualLang">
+        <option value="mixed" selected>🔀 Kết hợp đa dạng (mặc định)</option>
+        <option value="icons">🔣 Ưu tiên icon minh họa</option>
+        <option value="diagrams">📐 Ưu tiên sơ đồ &amp; mũi tên</option>
+        <option value="illustrations">🖌️ Ưu tiên hình minh họa</option>
+        <option value="textonly">📝 Chỉ văn bản — không dùng hình</option>
+        <option value="charts">📈 Ưu tiên biểu đồ &amp; bảng</option>
+      </select>
+    </div>
   </div>
   <div class="check-grid">
     <div class="check-row"><input type="checkbox" id="formulaBox"><label for="formulaBox">📐 Công thức đóng khung</label></div>
@@ -302,7 +377,84 @@ function getVisualExtras() {
   else e+='Bold strokes.\n';
   if(document.getElementById('formulaBox').checked) e+='Important formulas inside highlighted boxes. Large formula typography.\n';
   if(document.getElementById('stickyNote').checked) e+='Include handwritten sticky notes. Visual reminders. Important warnings.\n';
+
+  /* Bảng màu chủ đạo */
+  const colorMap = {
+    blue:    'COLOR PALETTE: Dominant royal blue #1565C0, navy #0D47A1, sky blue accents #42A5F5, white content areas.',
+    green:   'COLOR PALETTE: Dominant educational green #2E7D32, fresh teal #00897B, lime accents #8BC34A, white content areas.',
+    orange:  'COLOR PALETTE: Dominant vibrant orange #E65100, amber #F57F17, yellow accents #FDD835, white content areas.',
+    purple:  'COLOR PALETTE: Dominant creative purple #6A1B9A, indigo #3949AB, lavender accents #CE93D8, white content areas.',
+    red:     'COLOR PALETTE: Dominant bold red #C62828, deep crimson #B71C1C, orange-red accents #FF5722, white content areas.',
+    pastel:  'COLOR PALETTE: Soft pastel palette — baby blue #BBDEFB, blush pink #F8BBD0, mint green #C8E6C9, lavender #E1BEE7, white background.',
+    bw:      'COLOR PALETTE: Black and white only. No colors. High contrast grayscale. Print-friendly.',
+    warm:    'COLOR PALETTE: Warm academic — golden yellow #F9A825, warm amber #FF8F00, cream #FFF8E1, brown accents #5D4037.',
+  };
+  e += (colorMap[document.getElementById('colorPalette').value] || '') + '\n';
+
+  /* Phong cách thiết kế */
+  const styleMap = {
+    professional: 'DESIGN STYLE: Professional academic. Clean structured layout. Formal typography. Corporate educational quality.',
+    minimal:      'DESIGN STYLE: Clean minimal. Maximum white space. Simple lines. No decoration. Modern and uncluttered.',
+    colorful:     'DESIGN STYLE: Colorful and vivid. Bold color blocks. Energetic layout. Eye-catching and engaging.',
+    cartoon:      'DESIGN STYLE: Friendly cartoon style. Rounded shapes. Cute illustrations. Approachable and fun for students.',
+    vintage:      'DESIGN STYLE: Classic vintage academic. Aged paper texture feel. Serif typography. Traditional school aesthetic.',
+    dark:         'DESIGN STYLE: Dark mode. Dark navy or charcoal background. Bright text and accents. Modern high-contrast.',
+  };
+  e += (styleMap[document.getElementById('designStyle').value] || '') + '\n';
+
+  /* Mức độ chi tiết */
+  const detailMap = {
+    concise:  'CONTENT DENSITY: Concise — show only the most essential points. Maximum clarity, minimum clutter. Short labels and keywords only.',
+    balanced: 'CONTENT DENSITY: Balanced — adequate detail for learning. Include key definitions, formulas and one example per concept.',
+    detailed: 'CONTENT DENSITY: Detailed — comprehensive coverage. Include all definitions, formulas, examples, notes and connections.',
+    ultra:    'CONTENT DENSITY: Ultra-detailed — include every definition, formula, example, common mistake and memory tip. Dense but organized.',
+  };
+  e += (detailMap[document.getElementById('detailLevel').value] || '') + '\n';
+
+  /* Ngôn ngữ hình ảnh */
+  const visualMap = {
+    mixed:         'VISUAL ELEMENTS: Use a balanced mix — icons, diagrams, arrows, and illustrations as appropriate.',
+    icons:         'VISUAL ELEMENTS: Prioritize icons and symbols. Every concept should have a clear icon. Minimal diagrams.',
+    diagrams:      'VISUAL ELEMENTS: Prioritize diagrams, flowcharts, and arrows. Show relationships and processes visually.',
+    illustrations: 'VISUAL ELEMENTS: Prioritize hand-drawn style illustrations. Detailed educational drawings. Minimal icons.',
+    textonly:      'VISUAL ELEMENTS: Text only. No illustrations or decorative elements. Pure typographic layout.',
+    charts:        'VISUAL ELEMENTS: Prioritize charts, tables, and data visualizations. Structured comparison layouts.',
+  };
+  e += (visualMap[document.getElementById('visualLang').value] || '') + '\n';
+
   return e;
+}
+
+/* ---- BUILD INFO BLOCK (used in all prompts) ---- */
+function getInfoBlock(subject, topic, grade) {
+  const levelMap = {
+    '':        '',
+    weak:      'Student level: Weak — use very simple language, many concrete examples, avoid abstract terms.',
+    average:   'Student level: Average — balance theory and practice, moderate vocabulary.',
+    good:      'Student level: Good — standard academic language, encourage critical thinking.',
+    excellent: 'Student level: Excellent — advanced vocabulary, cross-subject connections welcome.',
+    mixed:     'Student level: Mixed class — differentiate content for multiple levels in the same image.',
+  };
+  const countMap = {
+    '1':      'Generate: 1 comprehensive image covering all content.',
+    '2':      'Generate: 2 images — Part 1 (theory/concepts) and Part 2 (examples/practice).',
+    '3':      'Generate: 3 images — divide content into 3 logical sections.',
+    set5:     'Generate: A set of 5 slide images for sequential presentation. Label each slide 1/5, 2/5... 5/5.',
+    set3focus:'Generate: A set of 3 focused images — (1) Key concepts, (2) Formulas & examples, (3) Review & tips.',
+  };
+  const level   = document.getElementById('studentLevel').value;
+  const count   = document.getElementById('imageCount').value;
+  const obj     = document.getElementById('objective').value.trim();
+  const special = document.getElementById('special').value.trim();
+  const grd     = grade ? 'Grade/Class: ' + grade + '\n' : '';
+
+  let block = '';
+  block += grd;
+  if(levelMap[level]) block += levelMap[level] + '\n';
+  if(countMap[count]) block += countMap[count] + '\n';
+  if(obj)     block += 'Learning objective: ' + obj + '\n';
+  if(special) block += 'Special requirements: ' + special + '\n';
+  return block;
 }
 
 /* ---- WORKSHEET EXTRAS ---- */
@@ -351,14 +503,15 @@ function getGameExtras() {
    BASE PROMPTS
 ====================================== */
 function getBasePrompt(subject, topic, knowledge, grade) {
-  const vis = getVisualExtras();
-  const grd = grade ? '\nKhối / Lớp: '+grade : '';
+  const vis  = getVisualExtras();
+  const info = getInfoBlock(subject, topic, grade);
+  const grd  = grade ? '\nKhối / Lớp: '+grade : '';
 
   if(currentFormat==='poster'){return `Create an ultra-professional educational infographic poster in Vietnamese.
 FORMAT: A4 portrait (210mm×297mm), 300 DPI, CMYK-ready, print-ready.
 HEADER: ${TEACHER} | ${SCHOOL}
 Subject: ${subject}${grd} | Topic: "${topic}"
-STRUCTURE:
+${info}STRUCTURE:
 1. TOP HEADER BAR — "${TEACHER}" | "${SCHOOL}"
 2. TITLE — "${topic}" | "Môn: ${subject}"
 3. CORE KNOWLEDGE — 4–6 infographic cards: definitions, concepts, formulas, notes. Source: ${knowledge}
@@ -373,8 +526,7 @@ Vietnamese only. No watermark. No QR code. Print-ready A4.`;}
   if(currentFormat==='mindmap'){return `Create a clean, minimal educational mind map in Vietnamese.
 OUTPUT SIZE — MANDATORY: 1920×1080px, 16:9 (matches PowerPoint exactly), 150 DPI, RGB. No cropping, no letterbox.
 TYPOGRAPHY: Center title 40pt extra bold. Branch labels 30pt bold. Sub-nodes 24pt bold. NO text smaller than 24pt.
-COLOR: White background. Center node #1565C0. Each branch: distinct vivid color. Lines 4px.
-STRUCTURE: Center: "${topic}" | "Môn: ${subject}"
+${info}STRUCTURE: Center: "${topic}" | "Môn: ${subject}"
 Branches — group into 4–6 clusters: ${knowledge}
 Each branch: short label + 2–4 sub-nodes (terms/formulas only).
 ${vis}
@@ -383,7 +535,7 @@ Vietnamese only. No teacher/school name. Curved lines. No watermark. No QR code.
   if(currentFormat==='visual'){return `Create a professional educational visual lesson sheet in Vietnamese.
 FORMAT: A4 portrait, 300 DPI, print-ready.
 HEADER: ${TEACHER} | ${SCHOOL} | Subject: ${subject} | Topic: ${topic}
-DESIGN: Clear visual hierarchy. Colorful infographic blocks. Icons, arrows, diagrams. Min 18pt. Color-coded sections.
+${info}DESIGN: Clear visual hierarchy. Colorful infographic blocks. Icons, arrows, diagrams. Min 18pt. Color-coded sections.
 CONTENT: ${knowledge}
 ${vis}
 Vietnamese only. No watermark. No QR code.`;}
@@ -475,7 +627,7 @@ Vietnamese only. No clutter. No watermark. No QR code.`;}
   if(currentFormat==='worksheet_basic'){return `Create a professional educational worksheet in Vietnamese.
 FORMAT: A4 portrait. Print-ready. Black-and-white friendly.
 HEADER: ${TEACHER} | ${SCHOOL} | Môn: ${subject}${grd} | Chủ đề: ${topic}
-STRUCTURE:
+${info}STRUCTURE:
 1. KIẾN THỨC TRỌNG TÂM — tóm tắt lý thuyết, công thức, quy tắc, khung ghi nhớ
 2. VÍ DỤ MẪU — 2 ví dụ có lời giải chi tiết từng bước
 3. LUYỆN TẬP CƠ BẢN — 8–10 bài tập từ dễ đến trung bình
@@ -589,7 +741,7 @@ Focus on deep understanding, not memorization. Vietnamese only. Print-ready. No 
   if(currentFormat==='game_crossword'){return `Create a professional educational crossword puzzle in Vietnamese.
 FORMAT: A4 portrait. Print-ready. Black-and-white friendly.
 HEADER: ${TEACHER} | ${SCHOOL} | Môn: ${subject}${grd} | Chủ đề: "${topic}"
-CROSSWORD STRUCTURE:
+${info}CROSSWORD STRUCTURE:
 - Large crossword grid (minimum 12×12 squares)
 - Numbered squares with clear grid lines
 - HÀNG NGANG (Across): 8–10 clues — concise definitions leading to key terms
@@ -827,6 +979,10 @@ function generatePrompt() {
   const grade     = document.getElementById('grade').value.trim();
   if(!subject||!topic||!knowledge){ alert('Vui lòng điền đầy đủ Môn học, Chủ đề và Nội dung kiến thức!'); return; }
   document.getElementById('result').value = getBasePrompt(subject,topic,knowledge,grade).trim();
+  /* Flash result area */
+  const r = document.getElementById('result');
+  r.style.borderColor='#1565C0';
+  setTimeout(()=>{ r.style.borderColor='#ccc'; },1200);
 }
 
 /* ======== COPY ======== */
