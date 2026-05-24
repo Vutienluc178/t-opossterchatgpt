@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Generator Prompt Giáo Dục - Thầy Vũ Tiến Lực</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 * { box-sizing: border-box; }
 body { font-family: Arial, Helvetica, sans-serif; background: #f0f4fa; margin: 0; padding: 20px; }
@@ -80,6 +81,18 @@ textarea { min-height:130px; resize:vertical; }
 
 .ss-card-header   { background:linear-gradient(135deg,#047857,#059669); color:white; padding:10px 16px; border-radius:12px 12px 0 0; margin:-24px -24px 16px; font-weight:bold; font-size:14px; }
 .game-card-header { background:linear-gradient(135deg,#E65100,#F57C00); color:white; padding:10px 16px; border-radius:12px 12px 0 0; margin:-24px -24px 16px; font-weight:bold; font-size:14px; }
+
+/* EXCEL UPLOAD */
+.excel-upload-bar { display:flex; flex-wrap:wrap; align-items:center; gap:10px; background:#f0f7ff; border:2px dashed #90CAF9; border-radius:12px; padding:13px 18px; margin-bottom:20px; }
+.excel-upload-bar input[type=file] { display:none; }
+.btn-excel-upload { background:#1565C0; color:white; border:none; padding:9px 18px; border-radius:8px; cursor:pointer; font-size:13px; font-weight:bold; white-space:nowrap; }
+.btn-excel-upload:hover { background:#0D47A1; }
+.btn-excel-tpl { background:#fff; color:#1565C0; border:2px solid #1565C0; padding:9px 18px; border-radius:8px; cursor:pointer; font-size:13px; font-weight:bold; white-space:nowrap; }
+.btn-excel-tpl:hover { background:#e3f2fd; }
+.excel-upload-hint { font-size:12px; color:#555; flex:1; min-width:180px; }
+.excel-status { font-size:13px; font-weight:bold; padding:7px 14px; border-radius:7px; display:none; }
+.excel-status.ok  { background:#e8f5e9; color:#2E7D32; display:block; }
+.excel-status.err { background:#fce4ec; color:#C62828; display:block; }
 </style>
 </head>
 <body>
@@ -94,6 +107,16 @@ textarea { min-height:130px; resize:vertical; }
 <!-- THÔNG TIN BÀI -->
 <div class="card">
   <div class="section-title">📝 Thông tin bài học</div>
+
+  <!-- EXCEL UPLOAD BAR -->
+  <div class="excel-upload-bar">
+    <button class="btn-excel-upload" onclick="document.getElementById('excelFile').click()">📂 Tải file Excel</button>
+    <input type="file" id="excelFile" accept=".xlsx,.xls" onchange="handleExcelUpload(event)">
+    <button class="btn-excel-tpl" onclick="downloadExcelTemplate()">⬇️ Tải mẫu Excel</button>
+    <span class="excel-upload-hint">Tải mẫu Excel → điền thông tin → upload để tự động điền form</span>
+    <span class="excel-status" id="excelStatus"></span>
+  </div>
+
   <div class="input-row">
     <div><label>Môn học</label><input type="text" id="subject" placeholder="Ví dụ: Toán 9, Vật lý 11"></div>
     <div><label>Khối / Lớp</label><input type="text" id="grade" placeholder="Ví dụ: Lớp 9A1, Lớp 11B"></div>
@@ -992,6 +1015,165 @@ function copyPrompt() {
   el.select();
   document.execCommand('copy');
   alert('✅ Đã sao chép Prompt!');
+}
+
+/* ======== EXCEL UPLOAD ======== */
+// Map Excel column headers → field IDs
+const EXCEL_FIELD_MAP = {
+  'Môn học':            'subject',
+  'Khối/Lớp':          'grade',
+  'Chủ đề':            'topic',
+  'Nội dung kiến thức':'knowledge',
+  'Mục tiêu học tập':  'objective',
+  'Yêu cầu đặc biệt':  'special',
+  'Trình độ học sinh':  'studentLevel',
+  'Số lượng ảnh':       'imageCount',
+};
+
+// Map text values for select fields
+const STUDENT_LEVEL_MAP = {
+  'yếu':'weak','weak':'weak',
+  'trung bình':'average','average':'average',
+  'khá':'good','good':'good',
+  'giỏi':'excellent','excellent':'excellent',
+  'hỗn hợp':'mixed','mixed':'mixed',
+};
+const IMAGE_COUNT_MAP = {
+  '1':'1','1 ảnh':'1',
+  '2':'2','2 ảnh':'2',
+  '3':'3','3 ảnh':'3',
+  'bộ 5':'set5','5':'set5',
+  'bộ 3':'set3focus','3 trọng tâm':'set3focus',
+};
+
+function showExcelStatus(msg, isOk) {
+  const el = document.getElementById('excelStatus');
+  el.textContent = msg;
+  el.className = 'excel-status ' + (isOk ? 'ok' : 'err');
+  if (isOk) setTimeout(()=>{ el.className='excel-status'; }, 5000);
+}
+
+function handleExcelUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  // Reset input so same file can be re-uploaded
+  event.target.value = '';
+
+  if (typeof XLSX === 'undefined') {
+    showExcelStatus('❌ Thư viện Excel chưa tải xong. Vui lòng thử lại.', false);
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = new Uint8Array(e.target.result);
+      const wb   = XLSX.read(data, {type:'array'});
+      const ws   = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
+
+      if (rows.length < 2) {
+        showExcelStatus('❌ File Excel trống hoặc không đúng mẫu!', false);
+        return;
+      }
+
+      // Row 0 = headers, Row 1 = data
+      const headers = rows[0].map(h => String(h).trim());
+      const values  = rows[1];
+
+      let filled = 0;
+      headers.forEach((hdr, idx) => {
+        const fieldId = EXCEL_FIELD_MAP[hdr];
+        if (!fieldId) return;
+        const raw = String(values[idx] || '').trim();
+        if (!raw) return;
+
+        const el = document.getElementById(fieldId);
+        if (!el) return;
+
+        if (fieldId === 'studentLevel') {
+          const mapped = STUDENT_LEVEL_MAP[raw.toLowerCase()];
+          if (mapped) { el.value = mapped; filled++; }
+        } else if (fieldId === 'imageCount') {
+          const mapped = IMAGE_COUNT_MAP[raw.toLowerCase()] || IMAGE_COUNT_MAP[raw];
+          if (mapped) { el.value = mapped; filled++; }
+          else { el.value = '1'; filled++; }
+        } else {
+          el.value = raw;
+          filled++;
+        }
+      });
+
+      if (filled > 0) {
+        showExcelStatus('✅ Đã điền ' + filled + ' trường từ Excel!', true);
+      } else {
+        showExcelStatus('⚠️ Không nhận ra dữ liệu. Dùng đúng mẫu Excel.', false);
+      }
+    } catch(err) {
+      showExcelStatus('❌ Lỗi đọc file: ' + err.message, false);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+/* ======== DOWNLOAD EXCEL TEMPLATE ======== */
+function downloadExcelTemplate() {
+  if (typeof XLSX === 'undefined') {
+    alert('Thư viện Excel chưa tải. Vui lòng chờ một chút rồi thử lại.');
+    return;
+  }
+
+  const headers = [
+    'Môn học',
+    'Khối/Lớp',
+    'Chủ đề',
+    'Nội dung kiến thức',
+    'Mục tiêu học tập',
+    'Yêu cầu đặc biệt',
+    'Trình độ học sinh',
+    'Số lượng ảnh',
+  ];
+
+  const example = [
+    'Toán 9',
+    'Lớp 9A1',
+    'Hệ thức lượng trong tam giác vuông',
+    'Định lý Pythagore: a²=b²+c²\nHệ thức lượng: b²=a·b\', c²=a·c\'\nHệ thức cạnh góc vuông và đường cao',
+    'HS nhận biết và áp dụng được định lý Pythagore vào giải toán thực tế',
+    'Ưu tiên công thức, in màu, có hình minh họa tam giác',
+    'Khá',
+    '1',
+  ];
+
+  const notes = [
+    '','',
+    '',
+    '',
+    '',
+    '',
+    'yếu / trung bình / khá / giỏi / hỗn hợp',
+    '1 / 2 / 3 / bộ 5 / bộ 3',
+  ];
+
+  const wb  = XLSX.utils.book_new();
+  const ws  = XLSX.utils.aoa_to_sheet([headers, example, notes]);
+
+  // Column widths
+  ws['!cols'] = [
+    {wch:18},{wch:16},{wch:36},{wch:52},
+    {wch:50},{wch:46},{wch:28},{wch:18}
+  ];
+
+  // Style header row (bold)
+  headers.forEach((_, i) => {
+    const cellAddr = XLSX.utils.encode_cell({r:0, c:i});
+    if (!ws[cellAddr]) return;
+    ws[cellAddr].s = { font:{bold:true}, fill:{fgColor:{rgb:'1565C0'}}, alignment:{horizontal:'center'} };
+  });
+
+  XLSX.utils.book_append_sheet(wb, ws, 'Thông tin bài học');
+  XLSX.writeFile(wb, 'Mau_ThongTinBaiHoc.xlsx');
 }
 </script>
 </body>
