@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generator Prompt Giáo Dục - Thầy Vũ Tiến Lực</title>
+<style>
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f0f4fa;
+  margin: 0;
+  padding: 20px;
+}
+
+.container { max-width: 1200px; margin: auto; }
+
+.header {
+  background: linear-gradient(135deg, #0D47A1, #1976D2);
+  color: white;
+  text-align: center;
+  padding: 22px 20px;
+  border-radius: 16px;
+  margin-bottom: 20px;
+}
+.header h1 { margin: 0 0 6px; font-size: 22px; }
+.header h3 { margin: 0; font-size: 14px; opacity: .85; font-weight: normal; }
+
+.card {
+  background: white;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 3px 12px rgba(0,0,0,.1);
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-weight: bold;
+  color: #0D47A1;
+  font-size: 15px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.group-label {
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: #888;
+  margin: 14px 0 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #eef0f6;
+}
+
+label { font-weight: bold; color: #0D47A1; font-size: 14px; }
+
+input[type=text], textarea, select {
+  width: 100%;
+  padding: 11px 13px;
+  margin-top: 6px;
+  margin-bottom: 18px;
+  border: 1.5px solid #ccc;
+  border-radius: 9px;
+  font-size: 14px;
+  color: #222;
+  background: #fff;
+  transition: border .2s;
+}
+input:focus, textarea:focus, select:focus { outline: none; border-color: #1976D2; }
+textarea { min-height: 130px; resize: vertical; }
+
+.input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 600px) { .input-row { grid-template-columns: 1fr; } }
+
+/* ====== FORMAT GRID ====== */
+.format-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.fmt-card {
+  border: 2px solid #dde3f0;
+  border-radius: 12px;
+  padding: 11px 9px;
+  cursor: pointer;
+  text-align: center;
+  background: #fafbff;
+  transition: all .18s;
+  user-select: none;
+}
+.fmt-card:hover  { border-color: #1976D2; background: #e8f0fe; }
+.fmt-card.active {
+  border-color: #0D47A1;
+  background: #e3f2fd;
+  box-shadow: 0 0 0 3px rgba(13,71,161,.13);
+}
+
+.fmt-icon { font-size: 26px; margin-bottom: 4px; }
+.fmt-name { font-weight: bold; font-size: 11px; color: #0D47A1; line-height: 1.35; }
+.fmt-sub  { font-size: 10px; color: #666; margin-top: 3px; }
+
+.fmt-badge {
+  display: inline-block;
+  font-size: 9px;
+  padding: 2px 7px;
+  border-radius: 20px;
+  margin-top: 5px;
+  font-weight: bold;
+}
+.badge-digital    { background: #e3f2fd; color: #1565C0; }
+.badge-hand       { background: #fff3e0; color: #E65100; }
+.badge-board      { background: #e8f5e9; color: #1B5E20; }
+.badge-present    { background: #f3e5f5; color: #6A1B9A; }
+.badge-worksheet  { background: #fce4ec; color: #880E4F; }
+.badge-selfstudy  { background: #e0f2f1; color: #004D40; }
+
+/* ====== INFO BAR ====== */
+.format-info {
+  padding: 10px 16px;
+  border-radius: 9px;
+  border-left: 4px solid #2E7D32;
+  background: #e8f5e9;
+  color: #1B5E20;
+  font-size: 13px;
+  margin-bottom: 0;
+}
+
+/* ====== OPTIONS ====== */
+.options-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 600px) { .options-row { grid-template-columns: 1fr; } }
+
+.check-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+  margin-bottom: 6px;
+}
+
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: #f8f9ff;
+  border: 1px solid #e0e7f3;
+}
+.check-row input[type=checkbox] {
+  width: 16px; height: 16px;
+  margin: 0; cursor: pointer;
+  accent-color: #1565C0; flex-shrink: 0;
+}
+.check-row label {
+  margin: 0; font-size: 13px;
+  cursor: pointer; color: #333; font-weight: normal;
+}
+
+.check-row-ss {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+}
+.check-row-ss input[type=checkbox] {
+  width: 16px; height: 16px;
+  margin: 0; cursor: pointer;
+  accent-color: #059669; flex-shrink: 0;
+}
+.check-row-ss label {
+  margin: 0; font-size: 13px;
+  cursor: pointer; color: #065f46; font-weight: normal;
+}
+
+/* ====== BUTTONS ====== */
+.btn-gen {
+  background: #1565C0;
+  color: white;
+  border: none;
+  padding: 14px 36px;
+  border-radius: 9px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background .2s;
+}
+.btn-gen:hover { background: #0D47A1; }
+
+.btn-copy {
+  background: #2E7D32;
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 9px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 10px;
+  transition: background .2s;
+}
+.btn-copy:hover { background: #1B5E20; }
+
+#result {
+  width: 100%;
+  min-height: 420px;
+  font-family: Consolas, monospace;
+  font-size: 13px;
+  white-space: pre-wrap;
+  border: 1.5px solid #ccc;
+  border-radius: 9px;
+  padding: 12px;
+  margin-top: 6px;
+  color: #222;
+  resize: vertical;
+}
+
+.divider { border: none; border-top: 1px solid #e0e7f3; margin: 18px 0; }
+
+.panel-hidden { display: none; }
+.panel-show   { display: block; }
+
+/* Self-study card accent */
+.ss-card-header {
+  background: linear-gradient(135deg, #047857, #059669);
+  color: white;
+  padding: 10px 16px;
+  border-radius: 12px 12px 0 0;
+  margin: -24px -24px 16px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<!-- HEADER -->
+<div class="header">
+  <h1>🎓 Generator Prompt Ảnh Giáo Dục</h1>
+  <h3>Thầy Vũ Tiến Lực &nbsp;·&nbsp; Trường THPT Nguyễn Hữu Cảnh</h3>
+</div>
+
+<!-- THÔNG TIN BÀI -->
+<div class="card">
+  <div class="section-title">📝 Thông tin bài học</div>
+  <div class="input-row">
+    <div>
+      <label>Môn học</label>
+      <input type="text" id="subject" placeholder="Ví dụ: Toán 9">
+    </div>
+    <div>
+      <label>Khối / Lớp</label>
+      <input type="text" id="grade" placeholder="Ví dụ: Lớp 9A1">
+    </div>
+  </div>
+  <label>Chủ đề / Dạng bài</label>
+  <input type="text" id="topic" placeholder="Ví dụ: Hệ thức lượng trong tam giác vuông">
+  <label>Nội dung kiến thức & công thức</label>
+  <textarea id="knowledge" placeholder="Nhập kiến thức, công thức, ví dụ mẫu cần trình bày..."></textarea>
+</div>
+
+<!-- CHỌN ĐỊNH DẠNG -->
+<div class="card">
+  <div class="section-title">🎨 Chọn định dạng</div>
+
+  <div class="group-label">📊 Ảnh kỹ thuật số & Trình chiếu</div>
+  <div class="format-grid">
+    <div class="fmt-card active" id="fmt-poster" onclick="selectFormat('poster')">
+      <div class="fmt-icon">📊</div>
+      <div class="fmt-name">Poster Infographic</div>
+      <div class="fmt-sub">A4 dọc • In ấn</div>
+      <span class="fmt-badge badge-digital">Digital</span>
+    </div>
+    <div class="fmt-card" id="fmt-mindmap" onclick="selectFormat('mindmap')">
+      <div class="fmt-icon">🧠</div>
+      <div class="fmt-name">Mindmap hiện đại</div>
+      <div class="fmt-sub">16:9 • PowerPoint</div>
+      <span class="fmt-badge badge-present">Presentation</span>
+    </div>
+    <div class="fmt-card" id="fmt-visual" onclick="selectFormat('visual')">
+      <div class="fmt-icon">🎨</div>
+      <div class="fmt-name">Bài giảng trực quan</div>
+      <div class="fmt-sub">A4 • Infographic</div>
+      <span class="fmt-badge badge-digital">Digital</span>
+    </div>
+    <div class="fmt-card" id="fmt-timeline" onclick="selectFormat('timeline')">
+      <div class="fmt-icon">📅</div>
+      <div class="fmt-name">Timeline</div>
+      <div class="fmt-sub">Ngang • Tiến trình</div>
+      <span class="fmt-badge badge-digital">Digital</span>
+    </div>
+    <div class="fmt-card" id="fmt-flashcard" onclick="selectFormat('flashcard')">
+      <div class="fmt-icon">🃏</div>
+      <div class="fmt-name">Flashcard</div>
+      <div class="fmt-sub">Ôn tập nhanh</div>
+      <span class="fmt-badge badge-digital">Digital</span>
+    </div>
+    <div class="fmt-card" id="fmt-system" onclick="selectFormat('system')">
+      <div class="fmt-icon">🔷</div>
+      <div class="fmt-name">Sơ đồ hệ thống hóa</div>
+      <div class="fmt-sub">A4 • Phân cấp</div>
+      <span class="fmt-badge badge-digital">Digital</span>
+    </div>
+  </div>
+
+  <div class="group-label">✍️ Viết tay & Bảng lớp</div>
+  <div class="format-grid">
+    <div class="fmt-card" id="fmt-handwritten" onclick="selectFormat('handwritten')">
+      <div class="fmt-icon">✍️</div>
+      <div class="fmt-name">A4 Viết tay sư phạm</div>
+      <div class="fmt-sub">A4 dọc • Viết tay</div>
+      <span class="fmt-badge badge-hand">Viết tay</span>
+    </div>
+    <div class="fmt-card" id="fmt-handmindmap" onclick="selectFormat('handmindmap')">
+      <div class="fmt-icon">🗺️</div>
+      <div class="fmt-name">Mindmap viết tay</div>
+      <div class="fmt-sub">A4 • Sơ đồ tư duy</div>
+      <span class="fmt-badge badge-hand">Viết tay</span>
+    </div>
+    <div class="fmt-card" id="fmt-teacherboard" onclick="selectFormat('teacherboard')">
+      <div class="fmt-icon">🏫</div>
+      <div class="fmt-name">Giáo viên viết bảng</div>
+      <div class="fmt-sub">Bảng lớp • Phấn</div>
+      <span class="fmt-badge badge-board">Bảng</span>
+    </div>
+    <div class="fmt-card" id="fmt-notebook" onclick="selectFormat('notebook')">
+      <div class="fmt-icon">📓</div>
+      <div class="fmt-name">Vở ghi học sinh đẹp</div>
+      <div class="fmt-sub">A4 • Bút bi xanh</div>
+      <span class="fmt-badge badge-hand">Viết tay</span>
+    </div>
+    <div class="fmt-card" id="fmt-chalkboard" onclick="selectFormat('chalkboard')">
+      <div class="fmt-icon">🟢</div>
+      <div class="fmt-name">Bảng xanh phấn trắng</div>
+      <div class="fmt-sub">Chalk • Trình chiếu</div>
+      <span class="fmt-badge badge-board">Bảng</span>
+    </div>
+    <div class="fmt-card" id="fmt-whiteboard" onclick="selectFormat('whiteboard')">
+      <div class="fmt-icon">⬜</div>
+      <div class="fmt-name">Bảng trắng bút lông</div>
+      <div class="fmt-sub">Marker • Lớp học</div>
+      <span class="fmt-badge badge-board">Bảng</span>
+    </div>
+    <div class="fmt-card" id="fmt-revision" onclick="selectFormat('revision')">
+      <div class="fmt-icon">📋</div>
+      <div class="fmt-name">Tờ ghi nhớ ôn tập</div>
+      <div class="fmt-sub">A4 • Cheat sheet</div>
+      <span class="fmt-badge badge-hand">Viết tay</span>
+    </div>
+  </div>
+
+  <div class="group-label">📄 Phiếu bài tập & Kiểm tra</div>
+  <div class="format-grid">
+    <div class="fmt-card" id="fmt-worksheet_basic" onclick="selectFormat('worksheet_basic')">
+      <div class="fmt-icon">📝</div>
+      <div class="fmt-name">Phiếu bài tập cơ bản</div>
+      <div class="fmt-sub">A4 • 1 tiết học</div>
+      <span class="fmt-badge badge-worksheet">Phiếu BT</span>
+    </div>
+    <div class="fmt-card" id="fmt-worksheet_review" onclick="selectFormat('worksheet_review')">
+      <div class="fmt-icon">📚</div>
+      <div class="fmt-name">Phiếu ôn tập chuyên đề</div>
+      <div class="fmt-sub">A4 • Hệ thống hóa</div>
+      <span class="fmt-badge badge-worksheet">Phiếu BT</span>
+    </div>
+    <div class="fmt-card" id="fmt-worksheet_competency" onclick="selectFormat('worksheet_competency')">
+      <div class="fmt-icon">🎯</div>
+      <div class="fmt-name">Phiếu phát triển năng lực</div>
+      <div class="fmt-sub">A4 • Phân hóa HS</div>
+      <span class="fmt-badge badge-worksheet">Phiếu BT</span>
+    </div>
+    <div class="fmt-card" id="fmt-worksheet_teacher" onclick="selectFormat('worksheet_teacher')">
+      <div class="fmt-icon">🔑</div>
+      <div class="fmt-name">Phiếu BT + đáp án GV</div>
+      <div class="fmt-sub">A4 • Có thang điểm</div>
+      <span class="fmt-badge badge-worksheet">Phiếu BT</span>
+    </div>
+  </div>
+
+  <div class="group-label">🌟 Phiếu tự học cao cấp</div>
+  <div class="format-grid">
+    <div class="fmt-card" id="fmt-selfstudy_master" onclick="selectFormat('selfstudy_master')">
+      <div class="fmt-icon">🔄</div>
+      <div class="fmt-name">Phiếu tự học Mẫu → Tương tự</div>
+      <div class="fmt-sub">Master Learning</div>
+      <span class="fmt-badge badge-selfstudy">Tự học</span>
+    </div>
+    <div class="fmt-card" id="fmt-selfstudy_oneform" onclick="selectFormat('selfstudy_oneform')">
+      <div class="fmt-icon">🎖️</div>
+      <div class="fmt-name">Phiếu chinh phục 1 dạng bài</div>
+      <div class="fmt-sub">Deep Focus</div>
+      <span class="fmt-badge badge-selfstudy">Tự học</span>
+    </div>
+    <div class="fmt-card" id="fmt-selfstudy_ladder" onclick="selectFormat('selfstudy_ladder')">
+      <div class="fmt-icon">🪜</div>
+      <div class="fmt-name">Phiếu tự học bậc thang</div>
+      <div class="fmt-sub">Scaffolded Learning</div>
+      <span class="fmt-badge badge-selfstudy">Tự học</span>
+    </div>
+    <div class="fmt-card" id="fmt-selfstudy_feynman" onclick="selectFormat('selfstudy_feynman')">
+      <div class="fmt-icon">💡</div>
+      <div class="fmt-name">Phiếu tự học Feynman</div>
+      <div class="fmt-sub">Deep Understanding</div>
+      <span class="fmt-badge badge-selfstudy">Tự học</span>
+    </div>
+  </div>
+
+  <div class="format-info" id="format-info">
+    📊 Đang chọn: <strong>Poster Infographic</strong> — A4 dọc, in ấn, dán tường lớp học.
+  </div>
+</div>
+
+<!-- TÙY CHỌN ẢNH / VIẾT TAY -->
+<div class="card">
+  <div class="section-title">⚙️ Tùy chọn ảnh / viết tay</div>
+  <div class="options-row">
+    <div>
+      <label>Nền giấy</label>
+      <select id="paperType">
+        <option value="white">Giấy trắng</option>
+        <option value="lined">Giấy kẻ ngang</option>
+        <option value="grid">Giấy ô ly</option>
+        <option value="notepad">Giấy ghi chú học tập</option>
+        <option value="chalkboard">Bảng xanh</option>
+        <option value="whiteboard">Bảng trắng</option>
+      </select>
+    </div>
+    <div>
+      <label>Độ đậm chữ</label>
+      <select id="boldLevel">
+        <option value="bold">Đậm</option>
+        <option value="verybold">Rất đậm</option>
+        <option value="ultra">Cực đậm trình chiếu</option>
+      </select>
+    </div>
+  </div>
+  <div class="check-grid">
+    <div class="check-row">
+      <input type="checkbox" id="formulaBox">
+      <label for="formulaBox">📐 Công thức đóng khung</label>
+    </div>
+    <div class="check-row">
+      <input type="checkbox" id="stickyNote">
+      <label for="stickyNote">🗒️ Sticky note highlights</label>
+    </div>
+  </div>
+</div>
+
+<!-- TÙY CHỌN PHIẾU BÀI TẬP -->
+<div class="card panel-hidden" id="ws-options-card">
+  <div class="section-title">📄 Tùy chọn Phiếu bài tập</div>
+  <div class="options-row">
+    <div>
+      <label>Mức độ bài tập</label>
+      <select id="difficulty">
+        <option value="easy">Dễ</option>
+        <option value="basic">Cơ bản</option>
+        <option value="medium" selected>Trung bình</option>
+        <option value="good">Khá</option>
+        <option value="advanced">Nâng cao</option>
+        <option value="exam">Ôn thi THPTQG</option>
+        <option value="mixed">Phân hóa nhiều mức độ</option>
+      </select>
+    </div>
+    <div></div>
+  </div>
+  <label>Loại câu hỏi <span style="font-weight:normal;color:#666;font-size:12px;">(chọn một hoặc nhiều)</span></label>
+  <div class="check-grid" style="margin-top:10px;">
+    <div class="check-row"><input type="checkbox" id="q_mc" checked><label for="q_mc">🔘 Trắc nghiệm</label></div>
+    <div class="check-row"><input type="checkbox" id="q_tf"><label for="q_tf">✅ Đúng / Sai</label></div>
+    <div class="check-row"><input type="checkbox" id="q_match"><label for="q_match">🔗 Ghép nối</label></div>
+    <div class="check-row"><input type="checkbox" id="q_fill"><label for="q_fill">✏️ Điền khuyết</label></div>
+    <div class="check-row"><input type="checkbox" id="q_essay" checked><label for="q_essay">📝 Tự luận</label></div>
+    <div class="check-row"><input type="checkbox" id="q_real"><label for="q_real">🌍 Bài tập thực tế</label></div>
+  </div>
+</div>
+
+<!-- TÙY CHỌN PHIẾU TỰ HỌC -->
+<div class="card panel-hidden" id="ss-options-card">
+  <div class="ss-card-header">🌟 Tùy chọn Phiếu tự học cao cấp</div>
+
+  <div class="options-row">
+    <div>
+      <label>Tỷ lệ Bài mẫu / Bài tương tự</label>
+      <select id="exampleRatio">
+        <option value="1:2">1 mẫu : 2 tương tự</option>
+        <option value="1:3" selected>1 mẫu : 3 tương tự</option>
+        <option value="1:5">1 mẫu : 5 tương tự</option>
+        <option value="1:10">1 mẫu : 10 tương tự</option>
+      </select>
+    </div>
+    <div>
+      <label>Thang độ khó</label>
+      <select id="ssDifficulty">
+        <option value="basic">Cơ bản</option>
+        <option value="good" selected>Khá</option>
+        <option value="advanced">Nâng cao</option>
+        <option value="exam">Ôn thi THPT</option>
+        <option value="hsg">HSG</option>
+      </select>
+    </div>
+  </div>
+
+  <label>Hỗ trợ học sinh</label>
+  <div class="check-grid" style="margin-top:10px;">
+    <div class="check-row-ss">
+      <input type="checkbox" id="ss_steps" checked>
+      <label for="ss_steps">📋 Có hướng dẫn từng bước</label>
+    </div>
+    <div class="check-row-ss">
+      <input type="checkbox" id="ss_hints">
+      <label for="ss_hints">💬 Có gợi ý trước bài</label>
+    </div>
+    <div class="check-row-ss">
+      <input type="checkbox" id="ss_answer" checked>
+      <label for="ss_answer">🔑 Có đáp án cuối phiếu</label>
+    </div>
+    <div class="check-row-ss">
+      <input type="checkbox" id="ss_selfcheck">
+      <label for="ss_selfcheck">✔️ Checklist tự đánh giá</label>
+    </div>
+  </div>
+</div>
+
+<!-- SINH PROMPT -->
+<div class="card">
+  <button class="btn-gen" onclick="generatePrompt()">🚀 Sinh Prompt</button>
+  <hr class="divider">
+  <label>Prompt đã tạo</label>
+  <textarea id="result" readonly></textarea>
+  <button class="btn-copy" onclick="copyPrompt()">📋 Sao chép Prompt</button>
+</div>
+
+</div><!-- end container -->
+
+<script>
+
+const TEACHER = 'THẦY VŨ TIẾN LỰC';
+const SCHOOL  = 'TRƯỜNG THPT NGUYỄN HỮU CẢNH';
+
+/* ========== METADATA ========== */
+const FORMAT_META = {
+  poster:               { label:'Poster Infographic',            desc:'A4 dọc, in ấn, dán tường lớp học.',                             color:'#e3f2fd', border:'#1565C0', text:'#0D47A1', icon:'📊', ws:false, ss:false },
+  mindmap:              { label:'Mindmap hiện đại (16:9)',        desc:'1920×1080px, đúng kích thước PowerPoint, chữ tối thiểu 24pt.',   color:'#f3e5f5', border:'#6A1B9A', text:'#4A148C', icon:'🧠', ws:false, ss:false },
+  visual:               { label:'Bài giảng trực quan',            desc:'A4, infographic trực quan hỗ trợ giảng dạy.',                    color:'#e8f5e9', border:'#2E7D32', text:'#1B5E20', icon:'🎨', ws:false, ss:false },
+  timeline:             { label:'Timeline',                       desc:'Sơ đồ tiến trình ngang, thể hiện chuỗi bước.',                   color:'#fff3e0', border:'#E65100', text:'#BF360C', icon:'📅', ws:false, ss:false },
+  flashcard:            { label:'Flashcard',                      desc:'Thẻ ôn tập nhanh, mỗi thẻ một khái niệm / công thức.',           color:'#e0f7fa', border:'#00695C', text:'#004D40', icon:'🃏', ws:false, ss:false },
+  system:               { label:'Sơ đồ hệ thống hóa',            desc:'Sơ đồ phân cấp, phân loại kiến thức có cấu trúc.',               color:'#e8eaf6', border:'#283593', text:'#1A237E', icon:'🔷', ws:false, ss:false },
+  handwritten:          { label:'A4 Viết tay sư phạm',            desc:'Mô phỏng chữ viết tay giáo viên, nét xanh, nền giấy.',          color:'#fff8e1', border:'#F57F17', text:'#E65100', icon:'✍️', ws:false, ss:false },
+  handmindmap:          { label:'Mindmap viết tay',               desc:'Sơ đồ tư duy viết tay, A4 dọc, chữ tối thiểu 32pt đậm.',        color:'#fff8e1', border:'#F57F17', text:'#E65100', icon:'🗺️', ws:false, ss:false },
+  teacherboard:         { label:'Giáo viên viết bảng',            desc:'Mô phỏng bảng lớp, phấn lớn, dễ đọc từ xa.',                    color:'#e8f5e9', border:'#2E7D32', text:'#1B5E20', icon:'🏫', ws:false, ss:false },
+  notebook:             { label:'Vở ghi học sinh đẹp',            desc:'Trang vở học sinh, bút bi xanh, keyword highlight.',             color:'#fff8e1', border:'#F57F17', text:'#E65100', icon:'📓', ws:false, ss:false },
+  chalkboard:           { label:'Bảng xanh phấn trắng',           desc:'Nền bảng xanh, phấn trắng, phong cách lớp học truyền thống.',   color:'#e8f5e9', border:'#2E7D32', text:'#1B5E20', icon:'🟢', ws:false, ss:false },
+  whiteboard:           { label:'Bảng trắng bút lông',            desc:'Bảng trắng, bút marker xanh, trình bày bài dạy.',                color:'#e3f2fd', border:'#1565C0', text:'#0D47A1', icon:'⬜', ws:false, ss:false },
+  revision:             { label:'Tờ ghi nhớ ôn tập',              desc:'Cheat sheet viết tay, chỉ kiến thức cốt lõi, ôn thi.',           color:'#fce4ec', border:'#880E4F', text:'#6A0036', icon:'📋', ws:false, ss:false },
+  worksheet_basic:      { label:'Phiếu bài tập cơ bản',           desc:'A4, 1 tiết học, lý thuyết + ví dụ + bài tập cơ bản.',           color:'#fce4ec', border:'#AD1457', text:'#880E4F', icon:'📝', ws:true,  ss:false },
+  worksheet_review:     { label:'Phiếu ôn tập chuyên đề',         desc:'A4, hệ thống hóa kiến thức + bài tập nhiều mức độ.',             color:'#fce4ec', border:'#AD1457', text:'#880E4F', icon:'📚', ws:true,  ss:false },
+  worksheet_competency: { label:'Phiếu phát triển năng lực',      desc:'A4, phân hóa học sinh, hoạt động thực hành 4 cấp độ.',           color:'#fce4ec', border:'#AD1457', text:'#880E4F', icon:'🎯', ws:true,  ss:false },
+  worksheet_teacher:    { label:'Phiếu BT + đáp án GV',           desc:'A4, phiếu bài tập phân tầng kèm đáp án và thang điểm.',          color:'#fce4ec', border:'#AD1457', text:'#880E4F', icon:'🔑', ws:true,  ss:false },
+  selfstudy_master:     { label:'Phiếu tự học Mẫu → Tương tự',   desc:'Master Learning: học từ ví dụ → phân tích → luyện tương tự.',   color:'#e0f2f1', border:'#00796B', text:'#004D40', icon:'🔄', ws:false, ss:true  },
+  selfstudy_oneform:    { label:'Phiếu chinh phục 1 dạng bài',    desc:'Deep Focus: thuần thục hoàn toàn một dạng bài duy nhất.',        color:'#e0f2f1', border:'#00796B', text:'#004D40', icon:'🎖️', ws:false, ss:true  },
+  selfstudy_ladder:     { label:'Phiếu tự học bậc thang',         desc:'Scaffolded Learning: tăng dần từ nhận biết → vận dụng cao.',    color:'#e0f2f1', border:'#00796B', text:'#004D40', icon:'🪜', ws:false, ss:true  },
+  selfstudy_feynman:    { label:'Phiếu tự học Feynman',           desc:'Feynman Technique: hiểu sâu bằng cách tự giải thích lại.',      color:'#e0f2f1', border:'#00796B', text:'#004D40', icon:'💡', ws:false, ss:true  },
+};
+
+let currentFormat = 'poster';
+
+/* ========== CHỌN ĐỊNH DẠNG ========== */
+function selectFormat(fmt) {
+  currentFormat = fmt;
+  document.querySelectorAll('.fmt-card').forEach(c => c.classList.remove('active'));
+  document.getElementById('fmt-' + fmt).classList.add('active');
+
+  const m = FORMAT_META[fmt];
+  const info = document.getElementById('format-info');
+  info.innerHTML    = m.icon + ' Đang chọn: <strong>' + m.label + '</strong> — ' + m.desc;
+  info.style.background  = m.color;
+  info.style.borderColor = m.border;
+  info.style.color       = m.text;
+
+  // Toggle panels
+  const wsCard = document.getElementById('ws-options-card');
+  const ssCard = document.getElementById('ss-options-card');
+  wsCard.className = 'card ' + (m.ws ? 'panel-show' : 'panel-hidden');
+  ssCard.className = 'card ' + (m.ss ? 'panel-show' : 'panel-hidden');
+}
+
+/* ========== VISUAL EXTRAS ========== */
+function getVisualExtras() {
+  const paperMap = {
+    white:      'White clean paper background.',
+    lined:      'Lined notebook paper background.',
+    grid:       'Graph paper / grid paper background.',
+    notepad:    'Study note paper background with subtle texture.',
+    chalkboard: 'Dark green chalkboard background.',
+    whiteboard: 'Clean whiteboard background.',
+  };
+  const bold = document.getElementById('boldLevel').value;
+  let extra = paperMap[document.getElementById('paperType').value] + '\n';
+  if      (bold === 'verybold') extra += 'Bold strokes.\nHigh contrast.\n';
+  else if (bold === 'ultra')    extra += 'Bold strokes.\nHigh contrast.\nPresentation visibility optimized.\n';
+  else                          extra += 'Bold strokes.\n';
+  if (document.getElementById('formulaBox').checked) extra += 'Important formulas must be placed inside highlighted boxes.\nLarge formula typography.\n';
+  if (document.getElementById('stickyNote').checked) extra += 'Include handwritten sticky notes.\nVisual reminders.\nImportant warnings.\n';
+  return extra;
+}
+
+/* ========== WORKSHEET EXTRAS ========== */
+function getWorksheetExtras() {
+  const diffMap = {
+    easy:     'Easy level (Nhận biết only).',
+    basic:    'Basic level (Nhận biết + Thông hiểu).',
+    medium:   'Medium level (Nhận biết + Thông hiểu + Vận dụng).',
+    good:     'Good level (Thông hiểu + Vận dụng).',
+    advanced: 'Advanced level (Vận dụng + Vận dụng cao).',
+    exam:     'University entrance exam level (THPTQG standard). All difficulty tiers.',
+    mixed:    'Mixed difficulty: easy 30% — medium 40% — advanced 30%.',
+  };
+  const diff = document.getElementById('difficulty').value;
+  let extra = 'Difficulty: ' + diffMap[diff] + '\n';
+  extra += 'Cover: Recognition — Understanding — Application — High Application.\n\n';
+  const types = [];
+  if (document.getElementById('q_mc').checked)    types.push('5 multiple choice questions (trắc nghiệm)');
+  if (document.getElementById('q_tf').checked)    types.push('4 true/false questions (đúng sai)');
+  if (document.getElementById('q_match').checked) types.push('2 matching questions (ghép nối)');
+  if (document.getElementById('q_fill').checked)  types.push('4 fill-in-the-blank exercises (điền khuyết)');
+  if (document.getElementById('q_essay').checked) types.push('5 short-answer exercises (tự luận)');
+  if (document.getElementById('q_real').checked)  types.push('2 real-world application problems (thực tế)');
+  if (types.length > 0) {
+    extra += 'Question types:\n';
+    types.forEach(t => { extra += '- ' + t + '\n'; });
+  }
+  return extra;
+}
+
+/* ========== SELF-STUDY EXTRAS ========== */
+function getSelfstudyExtras() {
+  const ratioMap = {
+    '1:2':  'For every worked example, generate 2 equivalent practice problems.',
+    '1:3':  'For every worked example, generate 3 equivalent practice problems.',
+    '1:5':  'For every worked example, generate 5 equivalent practice problems.',
+    '1:10': 'For every worked example, generate 10 equivalent practice problems.',
+  };
+  const diffMap = {
+    basic:    'Basic level.',
+    good:     'Intermediate / Good level.',
+    advanced: 'Advanced level.',
+    exam:     'University entrance exam level (THPT standard).',
+    hsg:      'Gifted student competition level (HSG).',
+  };
+
+  const ratio = document.getElementById('exampleRatio').value;
+  const diff  = document.getElementById('ssDifficulty').value;
+  let extra = ratioMap[ratio] + '\n';
+  extra += 'Difficulty: ' + diffMap[diff] + '\n';
+
+  if (document.getElementById('ss_steps').checked)    extra += 'Show complete step-by-step reasoning for every worked example.\n';
+  if (document.getElementById('ss_hints').checked)    extra += 'Provide hints before each exercise.\n';
+  if (document.getElementById('ss_answer').checked)   extra += 'Include complete answer key at the end of the worksheet.\n';
+  if (document.getElementById('ss_selfcheck').checked) extra += 'Include a checklist for students to self-assess their understanding.\n';
+  return extra;
+}
+
+/* ========== BASE PROMPTS ========== */
+function getBasePrompt(subject, topic, knowledge, grade) {
+  const vis = getVisualExtras();
+  const gradeStr = grade ? '\nKhối / Lớp: ' + grade : '';
+
+  /* --- POSTER --- */
+  if (currentFormat === 'poster') {
+    return `Create an ultra-professional educational infographic poster in Vietnamese.
+
+FORMAT: A4 portrait (210mm × 297mm), 300 DPI, CMYK-ready, print-ready.
+
+HEADER: ${TEACHER} | ${SCHOOL}
+Subject: ${subject}${gradeStr}
+Topic: "${topic}"
+
+STRUCTURE:
+1. TOP HEADER BAR — "${TEACHER}" | "${SCHOOL}"
+2. TITLE SECTION — "${topic}" | "Môn: ${subject}"
+3. CORE KNOWLEDGE — 4–6 infographic cards: definitions, concepts, formulas, notes.
+   Source: ${knowledge}
+4. VISUAL EXPLANATION — large diagram with arrows and labels.
+5. VÍ DỤ MINH HỌA — worked example with explanation.
+6. LỖI THƯỜNG GẶP — common mistakes list.
+7. MẸO GHI NHỚ — memory shortcuts.
+8. GHI NHỚ NHANH — 3–5 key takeaways.
+
+${vis}
+RULES: Vietnamese only. No watermark. No QR code. Print-ready A4.`;
+  }
+
+  /* --- MINDMAP 16:9 --- */
+  if (currentFormat === 'mindmap') {
+    return `Create a clean, minimal educational mind map in Vietnamese.
+
+OUTPUT SIZE — MANDATORY:
+- Exact dimensions: 1920 × 1080 pixels
+- Aspect ratio: 16:9 — matches PowerPoint default slide size exactly
+- 150 DPI, RGB color mode
+- No cropping, no letterbox, no padding — full canvas used
+
+TYPOGRAPHY (strictly enforced):
+- Center title: 40pt extra bold
+- Branch labels: 30pt bold
+- Sub-nodes: 24pt bold
+- NO text smaller than 24pt anywhere
+
+COLOR: White background #FFFFFF. Center node: #1565C0. Each branch: distinct vivid color. Lines: 4px.
+
+STRUCTURE:
+Center: "${topic}" | "Môn: ${subject}"
+Branches — group knowledge into 4–6 logical clusters:
+${knowledge}
+Each branch: short label (2–4 words) + 2–4 sub-nodes (terms/formulas only, no full sentences).
+
+${vis}
+RULES: Vietnamese only. No teacher name, no school name, no icons. Curved lines. Generous white space. No watermark. No QR code. Full map fits within 1920×1080.`;
+  }
+
+  /* --- VISUAL LESSON --- */
+  if (currentFormat === 'visual') {
+    return `Create a professional educational visual lesson sheet in Vietnamese.
+FORMAT: A4 portrait, 300 DPI, print-ready.
+HEADER: ${TEACHER} | ${SCHOOL}
+Subject: ${subject} | Topic: ${topic}
+DESIGN: Clear visual hierarchy. Colorful infographic blocks. Icons, arrows, diagrams. Minimum 18pt. Color-coded sections.
+CONTENT: ${knowledge}
+${vis}
+Vietnamese only. No watermark. No QR code.`;
+  }
+
+  /* --- TIMELINE --- */
+  if (currentFormat === 'timeline') {
+    return `Create a professional educational timeline infographic in Vietnamese.
+FORMAT: Landscape 16:9 or A4 landscape, 300 DPI.
+HEADER: ${TEACHER} | ${SCHOOL}
+Subject: ${subject} | Topic: ${topic}
+DESIGN: Horizontal timeline. Color-coded milestones. Bold labels minimum 22pt. Connecting arrows. Small illustrations per milestone.
+CONTENT: ${knowledge}
+${vis}
+Vietnamese only. No watermark. No QR code.`;
+  }
+
+  /* --- FLASHCARD --- */
+  if (currentFormat === 'flashcard') {
+    return `Create a set of educational flashcards in Vietnamese.
+FORMAT: A4 or 16:9 slide, 300 DPI.
+Subject: ${subject} | Topic: ${topic}
+DESIGN: 6–9 flashcards in clean grid. Each card: bold keyword at top, definition/formula below. Alternating vivid colors. Minimum 20pt bold.
+CONTENT: ${knowledge}
+${vis}
+Vietnamese only. No watermark. No QR code.`;
+  }
+
+  /* --- SYSTEM DIAGRAM --- */
+  if (currentFormat === 'system') {
+    return `Create a professional educational hierarchical knowledge diagram in Vietnamese.
+FORMAT: A4 portrait or landscape, 300 DPI.
+HEADER: ${TEACHER} | ${SCHOOL}
+Subject: ${subject} | Topic: ${topic}
+DESIGN: Top-down tree structure. Color-coded levels. Rounded rectangle nodes. Minimum 18pt bold. Clean arrows.
+CONTENT: ${knowledge}
+${vis}
+Vietnamese only. No watermark. No QR code.`;
+  }
+
+  /* --- HANDWRITTEN A4 --- */
+  if (currentFormat === 'handwritten') {
+    return `Create an educational handwritten teaching sheet in Vietnamese.
+FORMAT: A4 portrait. Print-ready.
+Teacher: ${TEACHER} | School: ${SCHOOL}
+Subject: ${subject} | Topic: ${topic}
+STYLE: Simulate real teacher handwriting. Neat, beautiful, legible Vietnamese cursive. Minimum 32pt. Blue ink. White notebook paper. Perfect Vietnamese diacritics.
+LAYOUT: Title → Definitions → Formulas → Examples → Notes. Underlined headings. Numbered key points.
+KNOWLEDGE: ${knowledge}
+${vis}
+No tiny text. No clutter. Print-ready. No watermark. No QR code.`;
+  }
+
+  /* --- HANDWRITTEN MINDMAP --- */
+  if (currentFormat === 'handmindmap') {
+    return `Create a premium educational handwritten mind map in Vietnamese.
+FORMAT: A4 portrait. Print-ready.
+Teacher: ${TEACHER} | School: ${SCHOOL}
+Subject: ${subject} | Topic: ${topic}
+STYLE: Beautiful Vietnamese handwriting. Blue pen. Notebook aesthetic. Minimum 32pt bold. Readable from projector.
+STRUCTURE: Central topic circle "${topic}". Curved branches. 4–6 logical branches from:
+${knowledge}
+Each branch: handwritten label + 2–4 sub-nodes. Color-coded lines. Key terms underlined or circled.
+${vis}
+Vietnamese only. No watermark. No logo. No QR code.`;
+  }
+
+  /* --- TEACHER BOARD --- */
+  if (currentFormat === 'teacherboard') {
+    return `Simulate a professional teacher writing on a classroom blackboard in Vietnamese.
+FORMAT: 16:9 landscape, 1920×1080px, RGB.
+Teacher: ${TEACHER} | School: ${SCHOOL}
+Subject: ${subject} | Topic: ${topic}
+STYLE: Large chalk handwriting. Headings separated and underlined. Minimum 28pt. Green-black chalkboard. Structured lesson sections.
+KNOWLEDGE: ${knowledge}
+${vis}
+Vietnamese only. No watermark. No QR code.`;
+  }
+
+  /* --- NOTEBOOK --- */
+  if (currentFormat === 'notebook') {
+    return `Create a beautiful handwritten study notebook page in Vietnamese.
+FORMAT: A4 portrait. 300 DPI.
+Subject: ${subject} | Topic: ${topic}
+STYLE: Neat Vietnamese handwriting. Blue pen. Yellow/pastel keyword highlights. Framed formula boxes. Memory boxes. Lined notebook paper.
+CONTENT: ${knowledge}
+${vis}
+Vietnamese only. High legibility. No watermark. No QR code.`;
+  }
+
+  /* --- CHALKBOARD --- */
+  if (currentFormat === 'chalkboard') {
+    return `Create a classroom chalkboard teaching display in Vietnamese.
+FORMAT: 16:9 landscape, 1920×1080px, RGB.
+Teacher: ${TEACHER} | School: ${SCHOOL}
+Subject: ${subject} | Topic: ${topic}
+STYLE: Dark green chalkboard background. White chalk handwriting. Large lettering minimum 28pt. Textured chalk effect. Readable from projector distance.
+CONTENT: ${knowledge}
+${vis}
+Vietnamese only. No watermark. No QR code.`;
+  }
+
+  /* --- WHITEBOARD --- */
+  if (currentFormat === 'whiteboard') {
+    return `Create a classroom whiteboard teaching display in Vietnamese.
+FORMAT: 16:9 landscape, 1920×1080px, RGB.
+Teacher: ${TEACHER} | School: ${SCHOOL}
+Subject: ${subject} | Topic: ${topic}
+STYLE: Clean white whiteboard background. Blue marker handwriting. Bold, legible. Minimum 28pt. Professional classroom layout.
+CONTENT: ${knowledge}
+${vis}
+Vietnamese only. No watermark. No QR code.`;
+  }
+
+  /* --- REVISION --- */
+  if (currentFormat === 'revision') {
+    return `Create a revision cheat sheet in Vietnamese.
+FORMAT: A4 portrait. 300 DPI. Print-ready.
+Subject: ${subject} | Topic: ${topic}
+STYLE: Handwritten educational style. Key concepts only. Minimum 28pt. Memory tricks. Summary boxes. Exam format: Định nghĩa → Công thức → Ví dụ → Mẹo thi.
+CONTENT: ${knowledge}
+${vis}
+Vietnamese only. No clutter. Only essential info. No watermark. No QR code.`;
+  }
+
+  /* ===== WORKSHEET FORMATS ===== */
+  const wsExtras = getWorksheetExtras();
+
+  if (currentFormat === 'worksheet_basic') {
+    return `Create a professional educational worksheet in Vietnamese.
+FORMAT: A4 portrait. Print-ready. Black-and-white friendly.
+
+HEADER:
+${TEACHER}
+${SCHOOL}
+Môn: ${subject}${gradeStr}
+Chủ đề: ${topic}
+
+WORKSHEET STRUCTURE:
+
+1. KIẾN THỨC TRỌNG TÂM
+- Tóm tắt lý thuyết ngắn gọn
+- Công thức quan trọng
+- Quy tắc cần nhớ
+- Khung ghi nhớ
+
+2. VÍ DỤ MẪU
+- 2 ví dụ có lời giải chi tiết từng bước
+
+3. LUYỆN TẬP CƠ BẢN
+- 8–10 bài tập từ dễ đến trung bình
+
+4. TỰ ĐÁNH GIÁ
+- 5 câu trắc nghiệm nhanh kiểm tra hiểu bài
+
+5. GHI CHÚ HỌC SINH
+- Ô trống để học sinh ghi thêm
+
+KNOWLEDGE SOURCE:
+${knowledge}
+
+${wsExtras}
+Large readable text. Clean layout. Perfect Vietnamese typography. No watermark. No QR code.`;
+  }
+
+  if (currentFormat === 'worksheet_review') {
+    return `Create an educational revision worksheet in Vietnamese.
+FORMAT: A4 portrait. Print-ready.
+
+HEADER:
+${TEACHER} | ${SCHOOL}
+Môn: ${subject}${gradeStr}
+Chủ đề: ${topic}
+
+PART A — TÓM TẮT KIẾN THỨC
+- Sơ đồ hệ thống hóa mini
+- Công thức trọng tâm
+- Khái niệm quan trọng
+- Lỗi thường gặp
+
+PART B — BÀI TẬP MẪU
+- 3 ví dụ minh họa từng bước
+
+PART C — LUYỆN TẬP
+- 15 bài tập tự luận, mức độ tăng dần
+
+PART D — THỬ THÁCH
+- 3 bài vận dụng cao
+
+PART E — GHI NHỚ NHANH
+- 10 ý trọng tâm cần nhớ
+
+KNOWLEDGE SOURCE:
+${knowledge}
+
+${wsExtras}
+High readability. Print-ready A4. No watermark. No QR code.`;
+  }
+
+  if (currentFormat === 'worksheet_competency') {
+    return `Create a competency-based learning worksheet in Vietnamese.
+FORMAT: A4 portrait. Print-ready.
+
+Môn: ${subject}${gradeStr}
+Chủ đề: ${topic}
+
+1. MỤC TIÊU HỌC TẬP — 3–4 mục tiêu rõ ràng
+2. KIẾN THỨC CẦN NHỚ — tóm tắt ngắn + sơ đồ tư duy mini
+3. NHIỆM VỤ THỰC HÀNH:
+   Activity 1 — NHẬN BIẾT: bài tập cơ bản
+   Activity 2 — THÔNG HIỂU: giải thích, phân tích
+   Activity 3 — VẬN DỤNG: áp dụng công thức/quy tắc
+   Activity 4 — VẬN DỤNG THỰC TẾ: bài toán thực tiễn
+4. TỰ ĐÁNH GIÁ — học sinh tự đánh giá mức độ đạt
+5. PHẢN HỒI HỌC SINH — ô trống: Em thấy khó ở phần nào?
+
+KNOWLEDGE SOURCE:
+${knowledge}
+
+${wsExtras}
+Modern student-centered layout. Educational icons. Print-ready. No watermark. No QR code.`;
+  }
+
+  if (currentFormat === 'worksheet_teacher') {
+    return `Create a complete educational worksheet with teacher answer key in Vietnamese.
+FORMAT: A4 portrait. Print-ready. Clearly separated: student worksheet + answer key.
+
+HEADER: ${TEACHER} | ${SCHOOL}
+Môn: ${subject}${gradeStr}
+Chủ đề: ${topic}
+
+STUDENT WORKSHEET:
+SECTION 1 — TÓM TẮT KIẾN THỨC: key concepts and definitions.
+SECTION 2 — CÔNG THỨC QUAN TRỌNG: all essential formulas in framed boxes.
+SECTION 3 — VÍ DỤ HƯỚNG DẪN: 3 guided examples, step-by-step.
+SECTION 4 — BÀI TẬP LUYỆN TẬP (phân tầng):
+  Easy: 5 questions | Medium: 5 questions | Advanced: 5 questions
+
+--- TEACHER ANSWER KEY (separate section, clearly marked) ---
+SECTION 5 — ĐÁP ÁN & LỜI GIẢI: full solutions for all exercises.
+SECTION 6 — THANG ĐIỂM & TIÊU CHÍ: marking rubric, points per question.
+
+KNOWLEDGE SOURCE:
+${knowledge}
+
+${wsExtras}
+Clear visual separation between worksheet and answer key. Professional design. Print-ready A4. No watermark. No QR code.`;
+  }
+
+  /* ===== SELF-STUDY FORMATS ===== */
+  const ssExtras = getSelfstudyExtras();
+
+  if (currentFormat === 'selfstudy_master') {
+    return `Create an elite self-study worksheet in Vietnamese.
+
+FORMAT: A4 portrait. Print-ready.
+
+Teacher: ${TEACHER}
+School: ${SCHOOL}
+Môn: ${subject}${gradeStr}
+Chủ đề: ${topic}
+
+STRUCTURE — MASTER LEARNING (Mẫu → Tương tự):
+
+PART 1 — KIẾN THỨC TRỌNG TÂM
+- Tóm tắt ngắn gọn (5–7 dòng)
+- Công thức chính
+- Mẹo nhận dạng dạng bài
+
+PART 2 — BÀI TẬP MẪU (3 bài)
+- Giải từng bước chi tiết
+- Giải thích tư duy và cách nhận dạng
+- Highlight điểm chìa khóa của lời giải
+
+PART 3 — BÀI TẬP TƯƠNG TỰ
+- Mỗi bài mẫu → bài tương tự (giữ phương pháp, thay dữ kiện)
+- Học sinh tự giải, đối chiếu với mẫu
+
+PART 4 — TỰ KIỂM TRA
+- Đáp án cuối phiếu để tự đối chiếu
+
+KNOWLEDGE SOURCE:
+${knowledge}
+
+${ssExtras}
+Focus on learning by imitation and transfer. Vietnamese only. Print-ready. No watermark. No QR code.`;
+  }
+
+  if (currentFormat === 'selfstudy_oneform') {
+    return `Create a focused self-study worksheet in Vietnamese.
+
+FORMAT: A4 portrait. Print-ready.
+
+Môn: ${subject}${gradeStr}
+Dạng bài: ${topic}
+
+STRUCTURE — CHINH PHỤC 1 DẠNG BÀI:
+
+1. DẤU HIỆU NHẬN BIẾT DẠNG BÀI
+   - Làm thế nào để nhận ra dạng bài này?
+
+2. QUY TRÌNH GIẢI 5 BƯỚC
+   - Liệt kê rõ ràng từng bước thực hiện
+
+3. CÔNG THỨC CẦN NHỚ
+   - Tất cả công thức liên quan, đóng khung nổi bật
+
+4. BÀI MẪU SỐ 1 — lời giải đầy đủ, phân tích tư duy
+5. BÀI TƯƠNG TỰ SỐ 1 — học sinh tự làm
+6. BÀI MẪU SỐ 2 — lời giải đầy đủ, nâng độ khó nhẹ
+7. BÀI TƯƠNG TỰ SỐ 2 — học sinh tự làm
+8. BÀI LUYỆN ĐỘC LẬP — 4–6 bài không có gợi ý
+9. CHECKLIST TỰ ĐÁNH GIÁ
+   - Tôi đã hiểu quy trình? ☐
+   - Tôi có thể làm bài tương tự một mình? ☐
+   - Tôi biết mình sai ở đâu nếu làm sai? ☐
+
+KNOWLEDGE SOURCE:
+${knowledge}
+
+${ssExtras}
+Students should master one problem type completely. Vietnamese only. Print-ready. No watermark. No QR code.`;
+  }
+
+  if (currentFormat === 'selfstudy_ladder') {
+    return `Create a scaffolded self-study worksheet in Vietnamese.
+
+FORMAT: A4 portrait. Print-ready.
+
+Môn: ${subject}${gradeStr}
+Chủ đề: ${topic}
+
+STRUCTURE — PHIẾU BẬC THANG (4 cấp độ tăng dần):
+
+LEVEL 1 — NHẬN BIẾT 🟢
+- 2 ví dụ mẫu có lời giải
+- 4 bài tương tự
+- Gợi ý: [có]
+
+LEVEL 2 — THÔNG HIỂU 🟡
+- 2 ví dụ mẫu có lời giải
+- 4 bài tương tự
+- Gợi ý: [ít hơn]
+
+LEVEL 3 — VẬN DỤNG 🟠
+- 2 ví dụ mẫu có lời giải
+- 4 bài tương tự
+- Không có gợi ý
+
+LEVEL 4 — VẬN DỤNG CAO 🔴
+- 2 ví dụ mẫu có lời giải
+- 4 bài tương tự
+- Thử thách tư duy
+
+ĐÁP ÁN — cuối phiếu, phân theo cấp độ
+
+KNOWLEDGE SOURCE:
+${knowledge}
+
+${ssExtras}
+Each level gradually increases complexity. Provide hints at lower levels only. Vietnamese only. Print-ready. No watermark. No QR code.`;
+  }
+
+  if (currentFormat === 'selfstudy_feynman') {
+    return `Create a Feynman self-learning worksheet in Vietnamese.
+
+FORMAT: A4 portrait. Print-ready.
+
+Môn: ${subject}${gradeStr}
+Chủ đề: ${topic}
+
+STRUCTURE — PHƯƠNG PHÁP FEYNMAN (Hiểu sâu, không thuộc lòng):
+
+PART A — ĐỌC & HIỂU
+Giải thích kiến thức bằng ngôn ngữ đơn giản nhất.
+Như thể giải thích cho một học sinh lớp nhỏ hơn.
+
+PART B — VÍ DỤ MINH HỌA
+2–3 ví dụ cụ thể, gần gũi thực tế.
+
+PART C — TỰ GIẢI THÍCH LẠI
+Ô trống để học sinh tự viết lại bằng ngôn ngữ của mình.
+(Không nhìn vào phần A)
+
+PART D — BÀI MẪU CÓ HƯỚNG DẪN
+2 bài có lời giải phân tích từng bước.
+
+PART E — BÀI TẬP TƯƠNG TỰ
+Học sinh tự giải, áp dụng cách hiểu của mình.
+
+PART F — CÂU HỎI PHẢN BIỆN
+- Tại sao phương pháp này hoạt động?
+- Điều gì xảy ra nếu thay đổi điều kiện?
+- Có cách giải khác không?
+
+PART G — TỰ ĐÁNH GIÁ HIỂU BIẾT
+Thang đánh giá: Tôi hiểu hoàn toàn / Tôi hiểu một phần / Tôi cần xem lại
+
+KNOWLEDGE SOURCE:
+${knowledge}
+
+${ssExtras}
+Focus on deep understanding rather than memorization. Encourage student to think in their own words. Vietnamese only. Print-ready. No watermark. No QR code.`;
+  }
+
+  return '';
+}
+
+/* ========== GENERATE ========== */
+function generatePrompt() {
+  const subject   = document.getElementById('subject').value.trim();
+  const topic     = document.getElementById('topic').value.trim();
+  const knowledge = document.getElementById('knowledge').value.trim();
+  const grade     = document.getElementById('grade').value.trim();
+
+  if (!subject || !topic || !knowledge) {
+    alert('Vui lòng điền đầy đủ Môn học, Chủ đề và Nội dung kiến thức!');
+    return;
+  }
+
+  document.getElementById('result').value = getBasePrompt(subject, topic, knowledge, grade).trim();
+}
+
+/* ========== COPY ========== */
+function copyPrompt() {
+  const el = document.getElementById('result');
+  if (!el.value) { alert('Chưa có prompt! Hãy bấm Sinh Prompt trước.'); return; }
+  el.select();
+  document.execCommand('copy');
+  alert('✅ Đã sao chép Prompt!');
+}
+
+</script>
+</body>
+</html>
