@@ -93,6 +93,19 @@ textarea { min-height:130px; resize:vertical; }
 .excel-status { font-size:13px; font-weight:bold; padding:7px 14px; border-radius:7px; display:none; }
 .excel-status.ok  { background:#e8f5e9; color:#2E7D32; display:block; }
 .excel-status.err { background:#fce4ec; color:#C62828; display:block; }
+
+/* GOOGLE SHEET CONNECT */
+.gs-connect-bar { display:flex; flex-wrap:wrap; align-items:center; gap:10px; background:#f1f8e9; border:2px solid #A5D6A7; border-radius:12px; padding:11px 16px; margin-bottom:20px; }
+.gs-connect-bar input[type=text] { flex:1; min-width:220px; padding:8px 12px; margin:0; border:1.5px solid #81C784; border-radius:7px; font-size:13px; color:#1B5E20; background:#fff; }
+.gs-connect-bar input[type=text]:focus { border-color:#2E7D32; outline:none; }
+.btn-gs-save { background:#2E7D32; color:white; border:none; padding:9px 18px; border-radius:8px; cursor:pointer; font-size:13px; font-weight:bold; white-space:nowrap; }
+.btn-gs-save:hover { background:#1B5E20; }
+.btn-gs-test { background:#fff; color:#2E7D32; border:2px solid #2E7D32; padding:9px 14px; border-radius:8px; cursor:pointer; font-size:13px; font-weight:bold; white-space:nowrap; }
+.btn-gs-test:hover { background:#f1f8e9; }
+.gs-status { font-size:12px; font-weight:bold; padding:5px 12px; border-radius:6px; display:none; }
+.gs-status.ok  { background:#e8f5e9; color:#2E7D32; display:inline-block; }
+.gs-status.err { background:#fce4ec; color:#C62828; display:inline-block; }
+.gs-status.saving { background:#fff8e1; color:#F57F17; display:inline-block; }
 </style>
 </head>
 <body>
@@ -107,6 +120,15 @@ textarea { min-height:130px; resize:vertical; }
 <!-- THÔNG TIN BÀI -->
 <div class="card">
   <div class="section-title">📝 Thông tin bài học</div>
+
+  <!-- GOOGLE SHEET CONNECT BAR -->
+  <div class="gs-connect-bar">
+    <span style="font-size:20px;">📊</span>
+    <input type="text" id="gsUrl" placeholder="Dán Apps Script Web App URL vào đây để tự động lưu vào Google Sheet...">
+    <button class="btn-gs-test" onclick="testGsConnection()" title="Kiểm tra kết nối">🔗 Test</button>
+    <button class="btn-gs-save" onclick="saveGsUrl()">💾 Lưu URL</button>
+    <span class="gs-status" id="gsStatus"></span>
+  </div>
 
   <!-- EXCEL UPLOAD BAR -->
   <div class="excel-upload-bar">
@@ -208,6 +230,14 @@ textarea { min-height:130px; resize:vertical; }
     <div class="fmt-card" id="fmt-game_detective" onclick="selectFormat('game_detective')"><div class="fmt-icon">🔍</div><div class="fmt-name">Thám tử kiến thức</div><div class="fmt-sub">Detective • Cá nhân</div><span class="fmt-badge badge-game">Trò chơi</span></div>
     <div class="fmt-card" id="fmt-game_debate" onclick="selectFormat('game_debate')"><div class="fmt-icon">⚔️</div><div class="fmt-name">Tranh luận 2 đội</div><div class="fmt-sub">Debate • 2 đội</div><span class="fmt-badge badge-game">Trò chơi</span></div>
     <div class="fmt-card" id="fmt-game_lego" onclick="selectFormat('game_lego')"><div class="fmt-icon">🏗️</div><div class="fmt-name">Xây dựng kiến thức</div><div class="fmt-sub">Lego Learning • Nhóm</div><span class="fmt-badge badge-game">Trò chơi</span></div>
+  </div>
+
+  <div class="group-label">🚀 Hoạt động khởi động (16:9)</div>
+  <div class="format-grid">
+    <div class="fmt-card" id="fmt-warmup_question" onclick="selectFormat('warmup_question')"><div class="fmt-icon">❓</div><div class="fmt-name">Câu hỏi kích thích tư duy</div><div class="fmt-sub">16:9 • Slide mở đầu</div><span class="fmt-badge badge-present">Khởi động</span></div>
+    <div class="fmt-card" id="fmt-warmup_mystery" onclick="selectFormat('warmup_mystery')"><div class="fmt-icon">🔮</div><div class="fmt-name">Hình bí ẩn + câu đố</div><div class="fmt-sub">16:9 • Tò mò khám phá</div><span class="fmt-badge badge-present">Khởi động</span></div>
+    <div class="fmt-card" id="fmt-warmup_reallife" onclick="selectFormat('warmup_reallife')"><div class="fmt-icon">🌍</div><div class="fmt-name">Tình huống thực tế</div><div class="fmt-sub">16:9 • Kết nối cuộc sống</div><span class="fmt-badge badge-present">Khởi động</span></div>
+    <div class="fmt-card" id="fmt-warmup_challenge" onclick="selectFormat('warmup_challenge')"><div class="fmt-icon">⚡</div><div class="fmt-name">Thử thách mở đầu</div><div class="fmt-sub">16:9 • Năng lượng cao</div><span class="fmt-badge badge-present">Khởi động</span></div>
   </div>
 
   <div class="format-info" id="format-info">📊 Đang chọn: <strong>Poster Infographic</strong> — A4 dọc, in ấn, dán tường lớp học.</div>
@@ -371,6 +401,10 @@ const FORMAT_META = {
   game_detective:       {label:'Thám tử kiến thức',             desc:'Detective — đọc manh mối, suy luận tìm ra đáp án ẩn.',          color:'#fffde7',border:'#F9A825',text:'#5f4300',icon:'🔍',ws:false,ss:false,game:true},
   game_debate:          {label:'Tranh luận 2 đội',              desc:'Debate — 2 đội bảo vệ luận điểm trái chiều, phát triển tư duy phản biện.',color:'#fffde7',border:'#F9A825',text:'#5f4300',icon:'⚔️',ws:false,ss:false,game:true},
   game_lego:            {label:'Xây dựng kiến thức',            desc:'Lego Learning — ghép các mảnh kiến thức thành sơ đồ riêng của mình.',color:'#fffde7',border:'#F9A825',text:'#5f4300',icon:'🏗️',ws:false,ss:false,game:true},
+  warmup_question:      {label:'Khởi động: Câu hỏi kích thích', desc:'16:9 slide mở đầu — câu hỏi lớn ở trung tâm, gợi tư duy trước bài.',  color:'#ede7f6',border:'#512DA8',text:'#311B92',icon:'❓',ws:false,ss:false,game:false},
+  warmup_mystery:       {label:'Khởi động: Hình bí ẩn + câu đố',desc:'16:9 slide bí ẩn — hình ảnh ẩn/mờ kèm câu đố kích thích tò mò.',      color:'#ede7f6',border:'#512DA8',text:'#311B92',icon:'🔮',ws:false,ss:false,game:false},
+  warmup_reallife:      {label:'Khởi động: Tình huống thực tế',  desc:'16:9 slide thực tế — cảnh đời thường liên quan chủ đề + câu hỏi.',     color:'#ede7f6',border:'#512DA8',text:'#311B92',icon:'🌍',ws:false,ss:false,game:false},
+  warmup_challenge:     {label:'Khởi động: Thử thách mở đầu',   desc:'16:9 slide năng lượng cao — thử thách nhanh, đếm ngược, hừng hực.',   color:'#ede7f6',border:'#512DA8',text:'#311B92',icon:'⚡',ws:false,ss:false,game:false},
 };
 
 let currentFormat = 'poster';
@@ -991,6 +1025,91 @@ DESIGN: Lego/building brick inspired. Colorful. Construction theme. Playful yet 
 ${gameE}
 Vietnamese only. Print-ready. No watermark. No QR code.`;}
 
+  /* ── WARMUP 1: CÂU HỎI KÍCH THÍCH TƯ DUY ── */
+  if(currentFormat==='warmup_question'){return `Create a stunning 16:9 Vietnamese educational warm-up slide (1920×1080px, PowerPoint-ready).
+STYLE: Clean academic — deep navy blue background (#0D1B4B), white & gold text, soft geometric accents. Elegant and thought-provoking.
+${info}
+TOPIC: ${topic}
+LAYOUT STRUCTURE:
+TOP BAR (10%): Small label "🚀 KHỞI ĐỘNG BÀI HỌC" in gold. Subject badge on right.
+CENTRAL ZONE (55%):
+- One large thought-provoking OPEN QUESTION in the center (white, 52–60pt bold)
+- The question must be directly inspired by: ${knowledge}
+- Examples of good question types: "Tại sao...?", "Điều gì sẽ xảy ra nếu...?", "Em nghĩ ... hoạt động như thế nào?", "Quan sát hình — em đoán điều gì đang diễn ra?"
+- Below the main question: 2 SUPPORTING QUESTIONS (gold, 28pt) to help students think step by step
+- All questions visible at a glance from the back of a classroom
+ILLUSTRATION ZONE (right 30% of slide):
+- One clean, relevant educational illustration or icon cluster related to the topic
+- Minimal, symbolic — supports curiosity without revealing the answer
+- Vector-style, glowing or illuminated effect
+BOTTOM BAR (10%): Soft instruction text in muted white: "Suy nghĩ cá nhân 1 phút — rồi chia sẻ với bạn bên cạnh"
+TYPOGRAPHY: Vietnamese only. All text ≥24pt. High contrast. Legible from 6 meters.
+No watermark. No QR code. No logo. Ultra detailed. Print-ready.
+${vis}`;}
+
+  /* ── WARMUP 2: HÌNH BÍ ẨN + CÂU ĐỐ ── */
+  if(currentFormat==='warmup_mystery'){return `Create a captivating 16:9 Vietnamese educational mystery warm-up slide (1920×1080px, PowerPoint-ready).
+STYLE: Dramatic and curious — deep dark background (#12122A), vivid accent colors, spotlight / mystery lighting. Engaging and suspenseful.
+${info}
+TOPIC: ${topic}
+LAYOUT STRUCTURE:
+TOP (8%): Label "🔮 BÍ ẨN MỞ ĐẦU" in glowing white. Countdown hint: "Em có 1 phút để giải mã!"
+MYSTERY IMAGE ZONE (left 45%):
+- Large partially-revealed or silhouetted illustration directly related to the topic concept from: ${knowledge}
+- Visual techniques: blurred edges, puzzle-piece cutout, fog/cloud overlay, or "hidden beneath" effect
+- The image should intrigue students — they should ALMOST recognize it but not fully
+- Spotlight effect on a key detail
+QUESTION ZONE (right 50%):
+- Giant question: "🔍 Đây là gì?" or "Em nhìn thấy gì?" (white, 48pt bold)
+- 3 CLUE BOXES stacked vertically (dark purple cards with gold border):
+  * Gợi ý 1: [first conceptual clue from knowledge]
+  * Gợi ý 2: [second clue, slightly more specific]
+  * Gợi ý 3: [third clue, almost revealing]
+- Answer input line: "Dự đoán của em: ________________________"
+BOTTOM: "Giải mã xong → Em sẽ học về điều này ngay hôm nay!"
+TYPOGRAPHY: Vietnamese only. All text ≥24pt. High contrast white on dark. Dramatic glow effects.
+No watermark. No QR code. No logo. Ultra detailed.
+${vis}`;}
+
+  /* ── WARMUP 3: TÌNH HUỐNG THỰC TẾ ── */
+  if(currentFormat==='warmup_reallife'){return `Create a vivid 16:9 Vietnamese educational real-life scenario warm-up slide (1920×1080px, PowerPoint-ready).
+STYLE: Warm, realistic, photo-journalistic feel — rich colors, natural lighting, life-like illustration. Relatable and grounded.
+${info}
+TOPIC: ${topic}
+LAYOUT STRUCTURE:
+FULL-BLEED BACKGROUND: Semi-realistic scene illustration of a real-world situation where the knowledge from "${topic}" is directly at play. Scene drawn from everyday Vietnamese life (market, street, home, nature, classroom, hospital, etc.). Rich detail, warm tones. Semi-transparent dark gradient overlay on left 40%.
+TEXT OVERLAY (left side over gradient):
+TOP LABEL: "🌍 THỰC TẾ CUỘC SỐNG" (white badge)
+SCENARIO TITLE (white, 38pt bold): A one-sentence description of the scene
+QUESTION BLOCK (3 questions, white cards with 80% opacity):
+  ❶ "Em quan sát thấy điều gì trong tình huống này?" (observation)
+  ❷ "Theo em, điều gì đang xảy ra và tại sao?" (reasoning — directly tied to: ${knowledge})
+  ❸ "Nếu em là người trong tình huống đó, em sẽ làm gì?" (application)
+BOTTOM BANNER: "💡 Bài học hôm nay sẽ giúp em hiểu và giải quyết tình huống như thế này!"
+TYPOGRAPHY: Vietnamese only. All text ≥24pt. White or light on dark overlay. Clear and readable.
+No watermark. No QR code. No logo. Ultra-realistic illustration style. Print-ready.
+${vis}`;}
+
+  /* ── WARMUP 4: THỬ THÁCH MỞ ĐẦU ── */
+  if(currentFormat==='warmup_challenge'){return `Create an electrifying 16:9 Vietnamese educational challenge warm-up slide (1920×1080px, PowerPoint-ready).
+STYLE: High-energy, game-show / sports arena atmosphere — dark background with electric blue & orange neon, dynamic diagonal shapes, energy bursts. Exciting and motivating.
+${info}
+TOPIC: ${topic}
+LAYOUT STRUCTURE:
+BACKGROUND: Dark arena / stadium feel. Dynamic diagonal colored bands (electric blue #00B4FF, orange #FF6B00). Geometric energy lines radiating from center. Stars or sparks scattered.
+TOP HEADER: "⚡ THỬ THÁCH MỞ ĐẦU" in large neon-glowing uppercase text. Timer graphic showing "60 giây!" or countdown clock visual.
+CENTER CHALLENGE BOX (glowing bordered box):
+  - Title: "NHIỆM VỤ CỦA EM:" (orange, 32pt bold)
+  - The challenge — ONE fast, exciting task derived from: ${knowledge}
+    * Types: "Liệt kê nhanh 5 thứ liên quan đến...", "Sắp xếp theo thứ tự...", "Đúng hay Sai: ...", "Nối cột A với cột B:", "Điền vào chỗ trống:"
+  - Challenge must be doable in 60 seconds individually
+  - Large clear text ≥32pt
+SIDE PANEL (right): Scoring / Leaderboard teaser — "🏆 Ai xong trước — giơ tay!" + 3 blank trophy spots
+BOTTOM: "🎯 Sẵn sàng chưa? Bắt đầu!" in bold white. Edge: flame or lightning bolt decorative elements.
+TYPOGRAPHY: Vietnamese only. All text ≥24pt (challenge text ≥32pt). Max impact from the back of the room.
+No watermark. No QR code. No logo. Ultra detailed. Energetic illustration. Print-ready.
+${vis}`;}
+
   return '';
 }
 
@@ -1006,6 +1125,18 @@ function generatePrompt() {
   const r = document.getElementById('result');
   r.style.borderColor='#1565C0';
   setTimeout(()=>{ r.style.borderColor='#ccc'; },1200);
+  /* Lưu vào Google Sheet nếu đã cấu hình URL */
+  saveToSheet({
+    subject      : subject,
+    grade        : grade,
+    topic        : topic,
+    knowledge    : knowledge,
+    objective    : document.getElementById('objective').value.trim(),
+    special      : document.getElementById('special').value.trim(),
+    studentLevel : document.getElementById('studentLevel').value,
+    imageCount   : document.getElementById('imageCount').value,
+    format       : FORMAT_META[currentFormat] ? FORMAT_META[currentFormat].label : currentFormat,
+  });
 }
 
 /* ======== COPY ======== */
@@ -1015,6 +1146,63 @@ function copyPrompt() {
   el.select();
   document.execCommand('copy');
   alert('✅ Đã sao chép Prompt!');
+}
+
+/* ======== GOOGLE SHEET ======== */
+const GS_URL_KEY = 'gs_webapp_url';
+
+// Khởi động: load URL đã lưu từ localStorage
+(function initGsUrl() {
+  const saved = localStorage.getItem(GS_URL_KEY);
+  if (saved) document.getElementById('gsUrl').value = saved;
+})();
+
+function saveGsUrl() {
+  const url = document.getElementById('gsUrl').value.trim();
+  if (!url) { showGsStatus('Chưa nhập URL!', 'err'); return; }
+  if (!url.startsWith('https://script.google.com')) {
+    showGsStatus('URL không hợp lệ!', 'err'); return;
+  }
+  localStorage.setItem(GS_URL_KEY, url);
+  showGsStatus('✅ Đã lưu URL!', 'ok');
+}
+
+function testGsConnection() {
+  const url = document.getElementById('gsUrl').value.trim();
+  if (!url) { showGsStatus('Nhập URL trước!', 'err'); return; }
+  showGsStatus('⏳ Đang kiểm tra...', 'saving');
+  fetch(url)
+    .then(r => r.json())
+    .then(d => {
+      if (d.status === 'ok') showGsStatus('✅ Kết nối thành công!', 'ok');
+      else showGsStatus('⚠️ Nhận được phản hồi nhưng khác chuẩn', 'ok');
+    })
+    .catch(() => showGsStatus('❌ Lỗi kết nối. Kiểm tra lại URL và quyền Deploy.', 'err'));
+}
+
+function showGsStatus(msg, type) {
+  const el = document.getElementById('gsStatus');
+  el.textContent = msg;
+  el.className = 'gs-status ' + type;
+  if (type !== 'saving') setTimeout(() => { el.className = 'gs-status'; }, 5000);
+}
+
+async function saveToSheet(data) {
+  const url = (document.getElementById('gsUrl').value || localStorage.getItem(GS_URL_KEY) || '').trim();
+  if (!url || !url.startsWith('https://script.google.com')) return;
+  showGsStatus('⏳ Đang lưu...', 'saving');
+  try {
+    const res = await fetch(url, {
+      method : 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body   : JSON.stringify(data),
+    });
+    const json = await res.json();
+    if (json.success) showGsStatus('✅ Đã lưu vào Sheet (hàng ' + json.row + ')', 'ok');
+    else showGsStatus('⚠️ Lỗi: ' + (json.error || 'không rõ'), 'err');
+  } catch (err) {
+    showGsStatus('❌ Không lưu được: ' + err.message, 'err');
+  }
 }
 
 /* ======== EXCEL UPLOAD ======== */
